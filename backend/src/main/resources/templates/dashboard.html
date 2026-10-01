@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScaleForge | Autonomous Capacity Controller</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- ChartJS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="dashboard-container">
+        
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="logo-area">
+                <span class="logo-forge">Scale</span><span class="logo-forge-gradient">Forge</span>
+                <span class="badge">V1.0 (Phase 1)</span>
+            </div>
+            <div class="system-status">
+                <span class="status-dot pulse-green" id="system-status-dot"></span>
+                <span id="system-status-text">SYSTEM ACTIVE</span>
+            </div>
+        </header>
+
+        <!-- Main Stats Grid -->
+        <div class="stats-grid">
+            <div class="stats-card">
+                <div class="card-inner">
+                    <h3>Service Capacity</h3>
+                    <div class="stat-value" id="stat-replicas">0</div>
+                    <p class="stat-desc">Active Container Replicas</p>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="card-inner">
+                    <h3>Infrastructure Capacity</h3>
+                    <div class="stat-value" id="stat-nodes">0</div>
+                    <p class="stat-desc">Active Swarm EC2 Nodes</p>
+                </div>
+            </div>
+            <div class="stats-card">
+                <div class="card-inner">
+                    <h3>Cluster CPU Load</h3>
+                    <div class="stat-value"><span id="stat-cpu">0.0</span>%</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="cpu-progress" style="width: 0%"></div>
+                    </div>
+                    <p class="stat-desc">Aggregated Telemetry Average</p>
+                </div>
+            </div>
+            <div class="stats-card control-card">
+                <div class="card-inner">
+                    <h3>Autoscale Simulation</h3>
+                    <div class="control-actions">
+                        <button class="btn btn-spike" onclick="triggerLoadSpike(60)">
+                            <span>Spike Load (60s)</span>
+                        </button>
+                        <button class="btn btn-cool" onclick="triggerLoadSpike(15)">
+                            <span>Spike Load (15s)</span>
+                        </button>
+                    </div>
+                    <p class="stat-desc">Inject simulated traffic into target service</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Telemetry Chart -->
+        <div class="chart-section stats-card">
+            <div class="card-header">
+                <h2>Real-Time Capacity Telemetry Timeline</h2>
+                <span class="pulse-blue-text">Live 1m Snapshots</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="telemetryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Details Split Grid -->
+        <div class="details-grid">
+            
+            <!-- Replicas Load Distribution Panel -->
+            <div class="details-card stats-card">
+                <h2>Target Replicas Load Distribution</h2>
+                <div class="replicas-load-list" id="replica-loads-list">
+                    <div class="empty-row">No active container tasks found.</div>
+                </div>
+            </div>
+
+            <!-- Nodes Status Table -->
+            <div class="details-card stats-card">
+                <h2>Active Cluster Nodes</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hostname</th>
+                                <th>IP Address</th>
+                                <th>Status</th>
+                                <th>Heartbeat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nodes-table-body">
+                            <!-- Populated dynamically -->
+                            <tr>
+                                <td colspan="4" class="empty-row">No active nodes registered.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Decisions Audit Trail -->
+            <div class="details-card stats-card">
+                <h2>Traceable Scaling Decisions (Audit Log)</h2>
+                <div class="log-filter-panel">
+                    <input type="text" id="log-search-input" placeholder="Search logs (e.g. SCALE_UP, threshold...)" oninput="filterLogs()">
+                    <select id="log-time-filter" onchange="filterLogs()">
+                        <option value="24h" selected>Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="all">All History</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Action</th>
+                                <th>Reason</th>
+                                <th>Idempotency Key</th>
+                            </tr>
+                        </thead>
+                        <tbody id="decisions-table-body">
+                            <!-- Populated dynamically -->
+                            <tr>
+                                <td colspan="4" class="empty-row">No scaling events logged yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

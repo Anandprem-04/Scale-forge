@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: scaleforge-core
+  
+  # H2 Database configuration for local sandbox testing
+  datasource:
+    url: jdbc:h2:file:./data/scaleforgedb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Email configuration (SMTP mock setup)
+  mail:
+    host: localhost
+    port: 2525
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+# ScaleForge Custom Capacity Variables
+scaleforge:
+  api:
+    key: scaleforge-secure-token-12345
+  ml:
+    url: http://localhost:8000/predict
+  target:
+    max-replicas-per-node: 4
+  scaling:
+    threshold:
+      up: 80.0
+      down: 35.0
+    cooldown:
+      up-minutes: 10
+      down-minutes: 3
+    zombie-timeout-minutes: 7
+
+logging:
+  level:
+    root: INFO
+    com.scaleforge.core: DEBUG
+    com.scaleforge.mail: INFO
+    org.hibernate.SQL: WARN
