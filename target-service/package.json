@@ -1,0 +1,12 @@
+{
+  "name": "scale-target-service",
+  "version": "1.0.0",
+  "description": "Replaceable workload service for ScaleForge testing",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
